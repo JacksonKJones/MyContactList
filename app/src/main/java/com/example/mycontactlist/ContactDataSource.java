@@ -2,6 +2,7 @@ package com.example.mycontactlist;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.sql.SQLException;
 
@@ -67,5 +68,21 @@ public class ContactDataSource {
 
         }
         return didSucceed;
+    }
+
+    public int getLastContactID() {
+        int lastId;
+        try {
+            String query = "Select MAX(_id) from contact";
+            Cursor cursor = database.rawQuery(query, null);
+
+            cursor.moveToFirst();
+            lastId = cursor.getInt(0);
+            cursor.close();
+        }
+        catch (Exception e) {
+            lastId = -1;
+        }
+        return lastId;
     }
 }

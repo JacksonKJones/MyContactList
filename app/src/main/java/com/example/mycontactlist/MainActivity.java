@@ -3,16 +3,20 @@ package com.example.mycontactlist;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.service.controls.templates.ToggleTemplate;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -63,15 +67,58 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initSaveButton() {
-        Button ibList = findViewById(R.id.buttonSave);
-        ibList.setOnClickListener(new View.OnClickListener() {
+        Button saveButton = findViewById(R.id.buttonSave);
+        saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ContactMapActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                boolean wasSuccessful;
+
+                hideKeyboard();
+
+                ContactDataSource ds = new ContactDataSource(MainActivity.this);
+                try {
+                    ds.open();
+
+                    if (currentContact.getContactID() == -1) {
+                        wasSuccessful = ds.insertContact(currentContact);
+                        int newId = ds.getLastContactID();
+                        currentContact.setContactID(newId);
+                    } else {
+                        wasSuccessful = ds.updateContact(currentContact);
+                    }
+                    ds.close();
+                }
+                catch (Exception e) {
+                    wasSuccessful = false;
+                }
+
+                if (wasSuccessful) {
+                    ToggleButton editToggle = findViewById(R.id.toggleButton);
+                    editToggle.toggle();
+                    setForEditing(false);
+                }
             }
         });
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        EditText editName = findViewById(R.id.editName);
+        imm.hideSoftInputFromWindow(editName.getWindowToken(), 0);
+        EditText editAddress = findViewById(R.id.editAddress);
+        imm.hideSoftInputFromWindow(editAddress.getWindowToken(), 0);
+        EditText editCity = findViewById(R.id.editCity);
+        imm.hideSoftInputFromWindow(editCity.getWindowToken(), 0);
+        EditText editState = findViewById(R.id.editState);
+        imm.hideSoftInputFromWindow(editState.getWindowToken(), 0);
+        EditText editZipcode = findViewById(R.id.editZipcode);
+        imm.hideSoftInputFromWindow(editZipcode.getWindowToken(), 0);
+        EditText editHome = findViewById(R.id.editHome);
+        imm.hideSoftInputFromWindow(editHome.getWindowToken(), 0);
+        EditText editCell = findViewById(R.id.editCell);
+        imm.hideSoftInputFromWindow(editCell.getWindowToken(), 0);
+        EditText editEMail = findViewById(R.id.editEMail);
+        imm.hideSoftInputFromWindow(editEMail.getWindowToken(), 0);
     }
 
     private void initSettingsButton() {
@@ -121,6 +168,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         if (enabled) {
             editName.requestFocus();
+        } else {
+            ScrollView s = findViewById(R.id.scrollView);
+            s.fullScroll(ScrollView.FOCUS_UP);
         }
     }
 
@@ -235,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         final EditText etHomeNumber = findViewById(R.id.editHome);
-        etHomeNumber.addTextChangedListener(new TextWatcher() {
+        etHomeNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -253,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         final EditText etCellNumber = findViewById(R.id.editCell);
-        etCellNumber.addTextChangedListener(new TextWatcher() {
+        etCellNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
