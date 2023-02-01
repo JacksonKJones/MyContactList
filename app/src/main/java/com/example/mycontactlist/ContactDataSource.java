@@ -28,17 +28,17 @@ public class ContactDataSource {
         try {
             ContentValues initialValues = new ContentValues();
 
-            initialValues.put("contactname", c.getContactName());
-            initialValues.put("streetaddress", c.getStreetAddress());
-            initialValues.put("city", c.getCity());
-            initialValues.put("state", c.getState());
-            initialValues.put("zipcode", c.getZipCode());
-            initialValues.put("phonenumber", c.getPhoneNumber());
-            initialValues.put("cellnumber", c.getCellNumber());
-            initialValues.put("email", c.geteMail());
-            initialValues.put("birthday", String.valueOf(c.getBirthday().getTimeInMillis()));
+            initialValues.put(ContactDBHelper.NAME, c.getContactName());
+            initialValues.put(ContactDBHelper.ADDRESS, c.getStreetAddress());
+            initialValues.put(ContactDBHelper.CITY, c.getCity());
+            initialValues.put(ContactDBHelper.STATE, c.getState());
+            initialValues.put(ContactDBHelper.ZIPCODE, c.getZipCode());
+            initialValues.put(ContactDBHelper.PHONENUMBER, c.getPhoneNumber());
+            initialValues.put(ContactDBHelper.CELLNUMBER, c.getCellNumber());
+            initialValues.put(ContactDBHelper.EMAIL, c.geteMail());
+            initialValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
 
-            didSucceed = database.insert("contact", null, initialValues) > 0;
+            didSucceed = database.insert(ContactDBHelper.CONTACT_TABLE, null, initialValues) > 0;
         }
         catch (Exception e) {
 
@@ -52,17 +52,17 @@ public class ContactDataSource {
             Long rowID = (long) c.getContactID();
             ContentValues updateValues = new ContentValues();
 
-            updateValues.put("contactname", c.getContactName());
-            updateValues.put("streetaddress", c.getStreetAddress());
-            updateValues.put("city", c.getCity());
-            updateValues.put("state", c.getState());
-            updateValues.put("zipcode", c.getZipCode());
-            updateValues.put("phonenumber", c.getPhoneNumber());
-            updateValues.put("cellnumber", c.getCellNumber());
-            updateValues.put("email", c.geteMail());
-            updateValues.put("birthday", String.valueOf(c.getBirthday().getTimeInMillis()));
+            updateValues.put(ContactDBHelper.NAME, c.getContactName());
+            updateValues.put(ContactDBHelper.ADDRESS, c.getStreetAddress());
+            updateValues.put(ContactDBHelper.CITY, c.getCity());
+            updateValues.put(ContactDBHelper.STATE, c.getState());
+            updateValues.put(ContactDBHelper.ZIPCODE, c.getZipCode());
+            updateValues.put(ContactDBHelper.PHONENUMBER, c.getPhoneNumber());
+            updateValues.put(ContactDBHelper.CELLNUMBER, c.getCellNumber());
+            updateValues.put(ContactDBHelper.EMAIL, c.geteMail());
+            updateValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
 
-            didSucceed = database.update("contact", updateValues, "_id=" + rowID, null) > 0;
+            didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, "id=" + rowID, null) > 0;
         }
         catch (Exception e) {
 
@@ -73,7 +73,7 @@ public class ContactDataSource {
     public int getLastContactID() {
         int lastId;
         try {
-            String query = "Select MAX(_id) from contact";
+            String query = "Select MAX(_id) from " + ContactDBHelper.CONTACT_TABLE;
             Cursor cursor = database.rawQuery(query, null);
 
             cursor.moveToFirst();

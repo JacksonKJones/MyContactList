@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initSaveButton();
         setForEditing(false);
         initChangeDateButton();
+        initTextChangedEvents();
 
         currentContact = new Contact();
     }
@@ -81,8 +82,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
                     if (currentContact.getContactID() == -1) {
                         wasSuccessful = ds.insertContact(currentContact);
-                        int newId = ds.getLastContactID();
-                        currentContact.setContactID(newId);
+                        if (wasSuccessful) {
+                            int newId = ds.getLastContactID();
+                            currentContact.setContactID(newId);
+                        }
                     } else {
                         wasSuccessful = ds.updateContact(currentContact);
                     }
@@ -285,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         final EditText etHomeNumber = findViewById(R.id.editHome);
-        etHomeNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+        etHomeNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -303,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         });
 
         final EditText etCellNumber = findViewById(R.id.editCell);
-        etCellNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+        etCellNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -337,5 +340,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 currentContact.seteMail(etEMail.getText().toString());
             }
         });
+        etHomeNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        etCellNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
     }
 }
