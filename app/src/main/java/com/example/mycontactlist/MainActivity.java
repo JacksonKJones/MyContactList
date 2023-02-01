@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.service.controls.templates.ToggleTemplate;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,8 @@ import android.widget.ToggleButton;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.SaveDateListener {
+
+    private Contact currentContact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initSaveButton();
         setForEditing(false);
         initChangeDateButton();
+
+        currentContact = new Contact();
     }
 
     private void initListButton() {
@@ -57,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initSaveButton() {
-        ImageButton ibList = findViewById(R.id.buttonSave);
+        Button ibList = findViewById(R.id.buttonSave);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     public void didFinishDatePickerDialog(Calendar selectedTime) {
         TextView birthDay = findViewById(R.id.textBirthday);
         birthDay.setText(DateFormat.format("MM/dd/yyy", selectedTime));
+        currentContact.setBirthday(selectedTime);
     }
 
     private void initChangeDateButton() {
@@ -132,6 +139,152 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 FragmentManager fm = getSupportFragmentManager();
                 DatePickerDialog datePickerDialog = new DatePickerDialog();
                 datePickerDialog.show(fm, "DatePick");
+            }
+        });
+    }
+
+    private void initTextChangedEvents() {
+        final EditText etContactName = findViewById(R.id.editName);
+        etContactName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setContactName(etContactName.getText().toString());
+            }
+        });
+
+        final EditText etStreetAddress = findViewById(R.id.editAddress);
+        etStreetAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setStreetAddress(etStreetAddress.getText().toString());
+            }
+        });
+
+        final EditText etCity = findViewById(R.id.editCity);
+        etCity.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setCity(etCity.getText().toString());
+            }
+        });
+
+        final EditText etState = findViewById(R.id.editState);
+        etState.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setState(etState.getText().toString());
+            }
+        });
+
+        final EditText etZipCode = findViewById(R.id.editZipcode);
+        etZipCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setZipCode(etZipCode.getText().toString());
+            }
+        });
+
+        final EditText etHomeNumber = findViewById(R.id.editHome);
+        etHomeNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setPhoneNumber(etHomeNumber.getText().toString());
+            }
+        });
+
+        final EditText etCellNumber = findViewById(R.id.editCell);
+        etCellNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.setCellNumber(etCellNumber.getText().toString());
+            }
+        });
+
+        final EditText etEMail = findViewById(R.id.editEMail);
+        etEMail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                currentContact.seteMail(etEMail.getText().toString());
             }
         });
     }
