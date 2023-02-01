@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             public void onClick(View view) {
                 boolean wasSuccessful;
 
-                hideKeyboard();
+                hideKeyboard(a);
 
                 ContactDataSource ds = new ContactDataSource(MainActivity.this);
                 try {
