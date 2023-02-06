@@ -32,20 +32,13 @@ public class ContactMapActivity extends AppCompatActivity {
     }
 
     private void initMapButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonMap);
-        ibList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ContactMapActivity.this, ContactMapActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        });
+        ImageButton ibMap = findViewById(R.id.imageButtonMap);
+        ibMap.setEnabled(false);
     }
 
     private void initSettingsButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonSettings);
-        ibList.setOnClickListener(new View.OnClickListener() {
+        ImageButton ibSettings = findViewById(R.id.imageButtonSettings);
+        ibSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ContactMapActivity.this, ContactSettingsActivity.class);

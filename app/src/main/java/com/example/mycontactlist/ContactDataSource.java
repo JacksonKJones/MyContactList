@@ -5,11 +5,31 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ContactDataSource {
 
     private SQLiteDatabase database;
     private ContactDBHelper dbHelper;
+
+    public ArrayList<String> getContactName() {
+        ArrayList<String> contactNames = new ArrayList<>();
+        try {
+            String query = "Select contactname from contact";
+            Cursor cursor = database.rawQuery(query, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                contactNames.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        catch (Exception e) {
+            contactNames = new ArrayList<String>();
+        }
+        return contactNames;
+    }
 
     public ContactDataSource(Context context) {
         dbHelper = new ContactDBHelper(context);
