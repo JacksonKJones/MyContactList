@@ -13,4 +13,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="dialog_button_color">#26C6DA</color>
+    <color name="system_red">#FF0000</color>
+    <color name="system_transparent">#00000000</color>
+    <color name="system_blue">#0000FF</color>
 </resources>
