@@ -14,17 +14,7 @@ import java.util.ArrayList;
 
 public class ContactListActivity extends AppCompatActivity {
 
-    private View.OnClickListener onItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
-            int position = viewHolder.getAdapterPosition();
-            int contactID = contacts.get(position).getContactID();
-            Intent intent = new Intent(ContactListActivity.this, MainActivity.class);
-            intent.putExtra("contactID", contactID);
-            startActivity(intent);
-        }
-    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +26,7 @@ public class ContactListActivity extends AppCompatActivity {
         initSettingsButton();
 
         ContactDataSource ds = new ContactDataSource(this);
-        ArrayList<Contact> contacts;
+        ArrayList<Contact> contacts = new ArrayList<>();
 
         try {
             ds.open();
@@ -51,6 +41,17 @@ public class ContactListActivity extends AppCompatActivity {
         catch (Exception e) {
             Toast.makeText(this, "Error retrieving contacts", Toast.LENGTH_LONG).show();
         }
+        View.OnClickListener onItemClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) view.getTag();
+                int position = viewHolder.getAdapterPosition();
+                int contactID = contacts.get(position).getContactID();
+                Intent intent = new Intent(ContactListActivity.this, MainActivity.class);
+                intent.putExtra("contactID", contactID);
+                startActivity(intent);
+            }
+        };
     }
 
     private void initListButton() {
