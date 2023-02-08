@@ -15,10 +15,10 @@ public class ContactDataSource {
     private SQLiteDatabase database;
     private ContactDBHelper dbHelper;
 
-    public ArrayList<Contact> getContacts() {
+    public ArrayList<Contact> getContacts(String sortField, String sortOrder) {
         ArrayList<Contact> contacts = new ArrayList<Contact>();
         try {
-            String query = "SELECT * FROM CONTACT_TABLE";
+            String query = "SELECT * FROM CONTACT_TABLE ORDER BY " + sortField + " " + sortOrder;
             Cursor cursor = database.rawQuery(query, null);
 
             Contact newContact;
@@ -70,6 +70,17 @@ public class ContactDataSource {
             cursor.close();
         }
         return contact;
+    }
+
+    public boolean deleteContact(int contactID) {
+        boolean didDelete = false;
+        try {
+            didDelete = database.delete("CONTACT_TABLE","COLUMN_CONTACT_ID" + contactID, null) > 0;
+        }
+        catch (Exception e) {
+
+        }
+        return didDelete;
     }
 
     public ArrayList<String> getContactName() {
