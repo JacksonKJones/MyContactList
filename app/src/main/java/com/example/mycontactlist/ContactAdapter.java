@@ -1,6 +1,8 @@
 package com.example.mycontactlist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ public class ContactAdapter extends RecyclerView.Adapter {
 
         public TextView textViewContact;
         public TextView textPhone;
+        public TextView textAddress;
+        public TextView textCityStateZipCode;
         public Button deleteButton;
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -46,13 +50,17 @@ public class ContactAdapter extends RecyclerView.Adapter {
             return textPhone;
         }
 
+        public TextView getTextAddress() {
+            return textAddress;
+        }
+
+        public TextView getTextCityStateZipCode() {
+            return textCityStateZipCode;
+        }
+
         public Button getDeleteButton() {
             return deleteButton;
         }
-    }
-
-    public ContactAdapter(ArrayList<Contact> arrayList) {
-        contactData = arrayList;
     }
 
     public void setOnItemClickListener(View.OnClickListener itemClickListener) {
@@ -66,11 +74,26 @@ public class ContactAdapter extends RecyclerView.Adapter {
         return new ContactViewHolder(v);
     }
 
+    @SuppressLint("RecyclerView")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         ContactViewHolder cvh = (ContactViewHolder) holder;
+
+        //String currentAddress = contactData.get(position).getAddress();
+        //String currentCityStateZipCode = contactData.get(position).getCity() +
+                //", " + contactData.get(position).getState() +
+                //", " + contactData.get(position).getZipcode();
+
         cvh.getContactTextView().setText(contactData.get(position).getContactName());
+        if (ifPositionEven(position)) {
+            cvh.getContactTextView().setTextColor(Color.RED);
+        } else {
+            cvh.getContactTextView().setTextColor(Color.BLUE);
+        }
         cvh.getPhoneTextView().setText(contactData.get(position).getPhoneNumber());
+        //cvh.getTextAddress().setText(currentAddress);
+        //cvh.getTextCityStateZipCode().setText(currentCityStateZipCode);
+
         if (isDeleting) {
             cvh.getDeleteButton().setVisibility(View.VISIBLE);
             cvh.getDeleteButton().setOnClickListener(new View.OnClickListener() {
@@ -106,6 +129,10 @@ public class ContactAdapter extends RecyclerView.Adapter {
         catch (Exception e) {
             Toast.makeText(parentContext, "Delete Failed!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean ifPositionEven(int position) {
+        return position % 2 == 0;
     }
 
 
