@@ -59,8 +59,6 @@ public class ContactListActivity extends AppCompatActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Error retrieving contacts", Toast.LENGTH_LONG).show();
         }
-    }
-
 
 
     private View.OnClickListener onItemClickListener = new View.OnClickListener() {
