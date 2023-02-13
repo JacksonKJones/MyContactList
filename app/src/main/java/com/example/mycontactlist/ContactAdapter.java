@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class ContactAdapter extends RecyclerView.Adapter {
     private ArrayList<Contact> contactData;
-    private View.OnClickListener mOnItemClickListener;
+    private static View.OnClickListener mOnItemClickListener;
     private boolean isDeleting;
     private Context parentContext;
 
@@ -63,7 +63,7 @@ public class ContactAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void setOnItemClickListener(View.OnClickListener itemClickListener) {
+    public static void setOnItemClickListener(View.OnClickListener itemClickListener) {
         mOnItemClickListener = itemClickListener;
     }
 
@@ -79,10 +79,10 @@ public class ContactAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         ContactViewHolder cvh = (ContactViewHolder) holder;
 
-        //String currentAddress = contactData.get(position).getAddress();
-        //String currentCityStateZipCode = contactData.get(position).getCity() +
-                //", " + contactData.get(position).getState() +
-                //", " + contactData.get(position).getZipcode();
+        String currentAddress = contactData.get(position).getStreetAddress();
+        String currentCityStateZipCode = contactData.get(position).getCity() +
+                ", " + contactData.get(position).getState() +
+                ", " + contactData.get(position).getZipCode();
 
         cvh.getContactTextView().setText(contactData.get(position).getContactName());
         if (ifPositionEven(position)) {
@@ -91,8 +91,8 @@ public class ContactAdapter extends RecyclerView.Adapter {
             cvh.getContactTextView().setTextColor(Color.BLUE);
         }
         cvh.getPhoneTextView().setText(contactData.get(position).getPhoneNumber());
-        //cvh.getTextAddress().setText(currentAddress);
-        //cvh.getTextCityStateZipCode().setText(currentCityStateZipCode);
+        cvh.getTextAddress().setText(currentAddress);
+        cvh.getTextCityStateZipCode().setText(currentCityStateZipCode);
 
         if (isDeleting) {
             cvh.getDeleteButton().setVisibility(View.VISIBLE);
@@ -127,12 +127,12 @@ public class ContactAdapter extends RecyclerView.Adapter {
             }
         }
         catch (Exception e) {
-            Toast.makeText(parentContext, "Delete Failed!", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 
     private boolean ifPositionEven(int position) {
-        return position % 2 == 0;
+        return (position % 2 == 0);
     }
 
 

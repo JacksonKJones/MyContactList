@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.service.controls.templates.ToggleTemplate;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -25,6 +26,8 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.SaveDateListener {
 
+    ContactDataSource ds = new ContactDataSource(this);
+    ImageButton ibList, ibMap, ibSettings;
     private Contact currentContact;
 
     @Override
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         initListButton();
         initMapButton();
         initSettingsButton();
+
         initToggleButton();
         initSaveButton();
         Bundle extras = getIntent().getExtras();
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
 
     private void initListButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonList);
+        ibList = findViewById(R.id.imageButtonList);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initMapButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonMap);
-        ibList.setOnClickListener(new View.OnClickListener() {
+        ibMap = findViewById(R.id.imageButtonMap);
+        ibMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ContactMapActivity.class);
@@ -164,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initSettingsButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonSettings);
-        ibList.setOnClickListener(new View.OnClickListener() {
+        ibSettings = findViewById(R.id.imageButtonSettings);
+        ibSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ContactSettingsActivity.class);

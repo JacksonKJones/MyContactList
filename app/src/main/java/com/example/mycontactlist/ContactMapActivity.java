@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 
 public class ContactMapActivity extends AppCompatActivity {
 
+    ImageButton ibList, ibMap, ibSettings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,8 +21,8 @@ public class ContactMapActivity extends AppCompatActivity {
         initSettingsButton();
     }
 
-    private void initListButton() {
-        ImageButton ibList = findViewById(R.id.imageButtonList);
+    private void initListButton () {
+        ibList = findViewById(R.id.imageButtonList);
         ibList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -29,15 +31,16 @@ public class ContactMapActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
     }
 
-    private void initMapButton() {
-        ImageButton ibMap = findViewById(R.id.imageButtonMap);
+    private void initMapButton () {
+        ibMap = findViewById(R.id.imageButtonMap);
         ibMap.setEnabled(false);
     }
 
-    private void initSettingsButton() {
-        ImageButton ibSettings = findViewById(R.id.imageButtonSettings);
+    private void initSettingsButton () {
+        ibSettings = findViewById(R.id.imageButtonSettings);
         ibSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

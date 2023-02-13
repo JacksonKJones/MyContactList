@@ -15,10 +15,43 @@ public class ContactDataSource {
     private SQLiteDatabase database;
     private ContactDBHelper dbHelper;
 
+    public ArrayList<Contact> getContacts() {
+        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        try {
+            String query = "SELECT * FROM " + ContactDBHelper.CONTACT_TABLE;
+            Cursor cursor = database.rawQuery(query, null);
+
+            Contact newContact;
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()) {
+                newContact = new Contact();
+                newContact.setContactID(cursor.getInt(0));
+                newContact.setContactName(cursor.getString(1));
+                newContact.setStreetAddress(cursor.getString(2));
+                newContact.setCity(cursor.getString(3));
+                newContact.setState(cursor.getString(4));
+                newContact.setZipCode(cursor.getString(5));
+                newContact.setPhoneNumber(cursor.getString(6));
+                newContact.setCellNumber(cursor.getString(7));
+                newContact.seteMail(cursor.getString(8));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(Long.valueOf(cursor.getString(9)));
+                newContact.setBirthday(calendar);
+                contacts.add(newContact);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        catch (Exception e) {
+            contacts = new ArrayList<Contact>();
+        }
+        return contacts;
+    }
+
     public ArrayList<Contact> getContacts(String sortField, String sortOrder) {
         ArrayList<Contact> contacts = new ArrayList<Contact>();
         try {
-            String query = "SELECT * FROM CONTACT_TABLE ORDER BY " + sortField + " " + sortOrder;
+            String query = "SELECT * FROM " + ContactDBHelper.CONTACT_TABLE + " ORDER BY " + sortField + " " + sortOrder;
             Cursor cursor = database.rawQuery(query, null);
 
             Contact newContact;
@@ -66,7 +99,7 @@ public class ContactDataSource {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(Long.valueOf(cursor.getString(9)));
             contact.setBirthday(calendar);
-            contact.setBirthday(calendar);
+
             cursor.close();
         }
         return contact;
@@ -81,25 +114,6 @@ public class ContactDataSource {
 
         }
         return didDelete;
-    }
-
-    public ArrayList<String> getContactName() {
-        ArrayList<String> contactNames = new ArrayList<>();
-        try {
-            String query = "Select COLUMN_NAME from CONTACT_TABLE";
-            Cursor cursor = database.rawQuery(query, null);
-
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                contactNames.add(cursor.getString(0));
-                cursor.moveToNext();
-            }
-            cursor.close();
-        }
-        catch (Exception e) {
-            contactNames = new ArrayList<String>();
-        }
-        return contactNames;
     }
 
     public ContactDataSource(Context context) {
@@ -153,6 +167,7 @@ public class ContactDataSource {
             updateValues.put(ContactDBHelper.EMAIL, c.geteMail());
             updateValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
 
+            String whereClause = ContactDBHelper.CONTACT_ID + "= ";
             didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, "id=" + rowID, null) > 0;
         }
         catch (Exception e) {
