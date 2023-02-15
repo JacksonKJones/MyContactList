@@ -45,8 +45,8 @@ public class ContactListActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        String sortBy = getSharedPreferences("MyContactListPreferences", Context.MODE_PRIVATE).getString("sortfield", ContactDBHelper.NAME);
-        String sortOrder = getSharedPreferences("MyContactListPreferences", Context.MODE_PRIVATE).getString("sortorder", "ASC");
+        String sortBy = getSharedPreferences(ContactSettingsActivity.ContactList_Preferences, Context.MODE_PRIVATE).getString(ContactSettingsActivity.sortFieldKey, ContactDBHelper.NAME);
+        String sortOrder = getSharedPreferences(ContactSettingsActivity.ContactList_Preferences, Context.MODE_PRIVATE).getString(ContactSettingsActivity.sortOrderKey, "ASC");
         ContactDataSource ds = new ContactDataSource(this);
         try {
             ds.open();

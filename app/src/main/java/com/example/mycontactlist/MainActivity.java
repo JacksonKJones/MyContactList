@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.SaveDateListener {
@@ -51,6 +52,27 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         setForEditing(false);
         initChangeDateButton();
         initTextChangedEvents();
+
+        ibList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Contact> contacts = new ArrayList<Contact>();
+                try {
+                    ds.open();
+                    contacts = ds.getContacts();
+                    ds.close();
+                    if (contacts.size() > 0) {
+                        Intent intent = new Intent(MainActivity.this, ContactListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    } else {
+
+                    }
+                }catch(Exception e ){
+
+                }
+            }
+        });
     }
 
     private void initContact(int id) {
@@ -180,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void initToggleButton() {
-        final ToggleButton editToggle = (ToggleButton) findViewById(R.id.toggleButton);
+        final ToggleButton editToggle = findViewById(R.id.toggleButton);
         editToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -37,6 +37,8 @@ public class ContactAdapter extends RecyclerView.Adapter {
             super(itemView);
             textViewContact = itemView.findViewById(R.id.textViewName);
             textPhone = itemView.findViewById(R.id.textPhoneNumber);
+            textAddress = itemView.findViewById(R.id.streetAddressTextCell);
+            textCityStateZipCode = itemView.findViewById(R.id.cityStateZipcodeTextCell);
             deleteButton = itemView.findViewById(R.id.buttonDeleteContact);
             itemView.setTag(this);
             itemView.setOnClickListener(mOnItemClickListener);

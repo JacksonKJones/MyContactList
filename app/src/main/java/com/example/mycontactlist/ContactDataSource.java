@@ -51,7 +51,7 @@ public class ContactDataSource {
     public ArrayList<Contact> getContacts(String sortField, String sortOrder) {
         ArrayList<Contact> contacts = new ArrayList<Contact>();
         try {
-            String query = "SELECT * FROM " + ContactDBHelper.CONTACT_TABLE + " ORDER BY " + sortField + " " + sortOrder;
+            String query = "SELECT * FROM "+ContactDBHelper.CONTACT_TABLE +" ORDER BY "+sortField+" "+sortOrder;
             Cursor cursor = database.rawQuery(query, null);
 
             Contact newContact;
