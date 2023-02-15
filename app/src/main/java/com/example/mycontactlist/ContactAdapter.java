@@ -35,7 +35,7 @@ public class ContactAdapter extends RecyclerView.Adapter {
         public Button deleteButton;
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewContact = itemView.findViewById(R.id.textViewName);
+            textViewContact = itemView.findViewById(R.id.textContactName);
             textPhone = itemView.findViewById(R.id.textPhoneNumber);
             textAddress = itemView.findViewById(R.id.streetAddressTextCell);
             textCityStateZipCode = itemView.findViewById(R.id.cityStateZipcodeTextCell);
@@ -72,7 +72,7 @@ public class ContactAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_item_view, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
         return new ContactViewHolder(v);
     }
 

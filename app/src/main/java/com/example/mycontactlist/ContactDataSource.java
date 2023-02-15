@@ -108,7 +108,7 @@ public class ContactDataSource {
     public boolean deleteContact(int contactID) {
         boolean didDelete = false;
         try {
-            didDelete = database.delete(ContactDBHelper.CONTACT_TABLE,ContactDBHelper.CONTACT_ID + contactID, null) > 0;
+            didDelete = database.delete(ContactDBHelper.CONTACT_TABLE,ContactDBHelper.CONTACT_ID + " = " + contactID, null) > 0;
         }
         catch (Exception e) {
 
