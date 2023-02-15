@@ -83,7 +83,7 @@ public class ContactDataSource {
 
     public Contact getSpecificContact(int contactID) {
         Contact contact = new Contact();
-        String query = "SELECT * FROM CONTACT_TABLE WHERE COLUMN_CONTACT_ID =" + contactID;
+        String query = "SELECT * FROM " + ContactDBHelper.CONTACT_TABLE + " WHERE " + ContactDBHelper.CONTACT_ID + " =" + contactID;
         Cursor cursor = database.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {
@@ -108,7 +108,7 @@ public class ContactDataSource {
     public boolean deleteContact(int contactID) {
         boolean didDelete = false;
         try {
-            didDelete = database.delete("CONTACT_TABLE","COLUMN_CONTACT_ID" + contactID, null) > 0;
+            didDelete = database.delete(ContactDBHelper.CONTACT_TABLE,ContactDBHelper.CONTACT_ID + contactID, null) > 0;
         }
         catch (Exception e) {
 
@@ -168,7 +168,7 @@ public class ContactDataSource {
             updateValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
 
             String whereClause = ContactDBHelper.CONTACT_ID + "= ";
-            didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, "id=" + rowID, null) > 0;
+            didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, ContactDBHelper.CONTACT_ID + "=" + rowID, null) > 0;
         }
         catch (Exception e) {
 
@@ -179,7 +179,7 @@ public class ContactDataSource {
     public int getLastContactID() {
         int lastId;
         try {
-            String query = "Select MAX(COLUMN_CONTACT_ID) from " + ContactDBHelper.CONTACT_TABLE;
+            String query = "Select MAX(" + ContactDBHelper.CONTACT_ID + ") from " + ContactDBHelper.CONTACT_TABLE;
             Cursor cursor = database.rawQuery(query, null);
 
             cursor.moveToFirst();
