@@ -126,6 +126,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ContactMapActivity.class);
+                if (currentContact.getContactID() == -1) {
+                    Toast.makeText(getBaseContext(), "Contact must be saved before it can be mapped", Toast.LENGTH_LONG).show();
+                } else {
+                    intent.putExtra(ContactDBHelper.CONTACT_ID, currentContact.getContactID());
+                }
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
