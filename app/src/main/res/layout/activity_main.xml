@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -112,10 +113,7 @@
                 android:inputType="textPersonName"
                 android:minHeight="48dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textContact" >
-
-                <requestFocus />
-            </EditText>
+                app:layout_constraintTop_toBottomOf="@+id/textContact" />
 
             <TextView
                 android:id="@+id/textAddress"
@@ -285,6 +283,19 @@
                 android:text="Change"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textBirthday"/>
+
+            <ImageButton
+                android:id="@+id/imageContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleX="2"
+                android:scaleY="2"
+                app:layout_constraintBottom_toBottomOf="@+id/editName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/editName"
+                app:layout_constraintTop_toTopOf="@+id/textContact"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

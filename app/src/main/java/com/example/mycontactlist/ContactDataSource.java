@@ -4,7 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -100,6 +104,13 @@ public class ContactDataSource {
             calendar.setTimeInMillis(Long.valueOf(cursor.getString(9)));
             contact.setBirthday(calendar);
 
+            byte[] photo = cursor.getBlob(10);
+            if(photo != null){
+                ByteArrayInputStream imageStream = new ByteArrayInputStream(photo);
+                Bitmap thePicture = BitmapFactory.decodeStream(imageStream);
+                contact.setPicture(thePicture);
+            }
+
             cursor.close();
         }
         return contact;
@@ -143,6 +154,13 @@ public class ContactDataSource {
             initialValues.put(ContactDBHelper.EMAIL, c.geteMail());
             initialValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
 
+            if(c.getPicture() != null ){
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                c.getPicture().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] photo = baos.toByteArray();
+                initialValues.put(ContactDBHelper.CONTACT_PHOTO,photo);
+            }
+
             didSucceed = database.insert(ContactDBHelper.CONTACT_TABLE, null, initialValues) > 0;
         }
         catch (Exception e) {
@@ -166,6 +184,13 @@ public class ContactDataSource {
             updateValues.put(ContactDBHelper.CELLNUMBER, c.getCellNumber());
             updateValues.put(ContactDBHelper.EMAIL, c.geteMail());
             updateValues.put(ContactDBHelper.BIRTHDAY, String.valueOf(c.getBirthday().getTimeInMillis()));
+
+            if(c.getPicture() != null ){
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                c.getPicture().compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] photo = baos.toByteArray();
+                updateValues.put(ContactDBHelper.CONTACT_PHOTO,photo);
+            }
 
             String whereClause = ContactDBHelper.CONTACT_ID + "= ";
             didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, ContactDBHelper.CONTACT_ID + "=" + rowID, null) > 0;

@@ -16,12 +16,13 @@ public class ContactDBHelper extends SQLiteOpenHelper {
     public static final String NAME = "COLUMN_NAME";
     public static final String ADDRESS = "COLUMN_ADDRESS";
     public static final String CITY= "COLUMN_CITY";
-    public static final String STATE = "COLUMN_TATE";
+    public static final String STATE = "COLUMN_STATE";
     public static final String ZIPCODE = "COLUMN_ZIPCODE";
     public static final String PHONENUMBER = "COLUMN_PHONENUMBER";
     public static final String CELLNUMBER = "COLUMN_CELLNUMBER";
     public static final String EMAIL = "COLUMN_EMAIL";
     public static final String BIRTHDAY = "COLUMN_BIRTHDAY";
+    public static final String CONTACT_PHOTO = "COLUMN_CONTACT_PHOTO";
 
 
     private static final String CREATE_TABLE =
@@ -30,7 +31,7 @@ public class ContactDBHelper extends SQLiteOpenHelper {
             + CITY + " TEXT, " + STATE + " TEXT, "
             + ZIPCODE + " TEXT, " + PHONENUMBER + " TEXT, "
             + CELLNUMBER + " TEXT, " + EMAIL + " TEXT, "
-            + BIRTHDAY + " TEXT)";
+            + BIRTHDAY + " TEXT, " + CONTACT_PHOTO + " BLOB);";
 
     public ContactDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -43,10 +44,10 @@ public class ContactDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(ContactDBHelper.class.getName(),
-                "Upgrading database from version " + oldVersion + " to "
-        + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + NAME);
-        onCreate(db);
+        try {
+            db.execSQL("ALTER TABLE " + CONTACT_TABLE + " ADD COLUMN " + CONTACT_PHOTO + " BLOB");
+        } catch (Exception e) {
+
+        }
     }
 }
