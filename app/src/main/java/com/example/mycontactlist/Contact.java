@@ -14,6 +14,9 @@ public class Contact {
     private String phoneNumber;
     private String cellNumber;
     private String eMail;
+
+
+
     private Calendar birthday;
     private Bitmap picture;
 
@@ -109,5 +112,21 @@ public class Contact {
 
     public void setPicture(Bitmap b) {
         picture = b;
+    }
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "contactID=" + contactID +
+                ", contactName='" + contactName + '\'' +
+                ", streetAddress='" + streetAddress + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", cellNumber='" + cellNumber + '\'' +
+                ", eMail='" + eMail + '\'' +
+                ", birthday=" + birthday +
+                ", picture=" + picture +
+                '}';
     }
 }

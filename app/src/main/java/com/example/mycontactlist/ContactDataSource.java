@@ -162,10 +162,12 @@ public class ContactDataSource {
             }
 
             didSucceed = database.insert(ContactDBHelper.CONTACT_TABLE, null, initialValues) > 0;
-        }
-        catch (Exception e) {
 
         }
+        catch (Exception e) {
+e.printStackTrace();
+        }
+        System.out.println(c.toString());
         return didSucceed;
     }
 
@@ -193,7 +195,7 @@ public class ContactDataSource {
             }
 
             String whereClause = ContactDBHelper.CONTACT_ID + "= ";
-            didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, ContactDBHelper.CONTACT_ID + "=" + rowID, null) > 0;
+            didSucceed = database.update(ContactDBHelper.CONTACT_TABLE, updateValues, whereClause + rowID, null) > 0;
         }
         catch (Exception e) {
 

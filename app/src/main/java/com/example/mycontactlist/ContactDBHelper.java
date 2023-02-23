@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 public class ContactDBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "mycontacts.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     public static final String CONTACT_TABLE = "CONTACT_TABLE";
     public static final String CONTACT_ID = "COLUMN_CONTACT_ID";
     public static final String NAME = "COLUMN_NAME";
