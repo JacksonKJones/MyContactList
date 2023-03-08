@@ -25,7 +25,7 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDzsVfYDSuICnvnmYYguXenwWQ-K4RaJFI" />
+                android:value="AIzaSyCi21nDQvEAqyQLHR47uYDlyyUoGr24nFk" />
         </activity>
         <activity
             android:name=".ContactMapActivity"
@@ -34,7 +34,7 @@
             android:label="Contact Map">
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDzsVfYDSuICnvnmYYguXenwWQ-K4RaJFI" />
+                android:value="AIzaSyCi21nDQvEAqyQLHR47uYDlyyUoGr24nFk" />
         </activity>
         <activity
             android:name=".MainActivity"
@@ -45,7 +45,7 @@
                 android:value="" />
             <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDzsVfYDSuICnvnmYYguXenwWQ-K4RaJFI" />
+                android:value="AIzaSyCi21nDQvEAqyQLHR47uYDlyyUoGr24nFk" />
         </activity>
         <activity
             android:name=".ContactListActivity"
@@ -56,10 +56,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyDzsVfYDSuICnvnmYYguXenwWQ-K4RaJFI" />
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCi21nDQvEAqyQLHR47uYDlyyUoGr24nFk" />
     </application>
 
 </manifest>

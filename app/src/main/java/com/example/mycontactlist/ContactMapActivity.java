@@ -5,7 +5,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,14 +18,12 @@ import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
+import com.google.android.gms.location.LocationRequest;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -43,7 +40,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
@@ -51,10 +47,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactMapActivity extends AppCompatActivity {
-    ImageButton ibList, ibMap, ibSettings;
-    final int PERMISSION_REQUEST_LOCATION = 101;
+    ImageButton settingsButton, mapButton, listButton;
     GoogleMap gMap;
     SupportMapFragment mapFragment;
+    ArrayList<Contact> contacts;
+    Contact currentContact = null;
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
@@ -62,57 +59,8 @@ public class ContactMapActivity extends AppCompatActivity {
     Sensor accelerometer;
     Sensor magnetometer;
     TextView textDirection;
-    ArrayList<Contact> contacts = new ArrayList<>();
-    Contact currentContact = null;
+    private static final int REQUEST_LOCATION_PERMISSION = 101;
 
-    private SensorEventListener mySensorEventListener = new SensorEventListener() {
-        float[] accelerometerValues;
-        float[] magneticValues;
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-                accelerometerValues = event.values;
-            }
-            if(event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD){
-                magneticValues = event.values;
-            }
-            //If sensors are found
-            if(accelerometerValues!=null && magneticValues!=null){
-                float R[] = new float[9];
-                float I[] = new float[9];
-                boolean success = SensorManager.getRotationMatrix(R,I,accelerometerValues,magneticValues);
-                if(success){
-                    float orientation[] = new float[3];
-                    SensorManager.getOrientation(R,orientation);
-
-                    float azimut = (float) Math.toDegrees(orientation[0]);
-                    if (azimut < 0.0f){
-                        azimut+=360.0f;
-                    }
-                    String direction;
-                    if(azimut >= 315 || azimut < 45 ){
-                        direction = "N";
-
-                    }
-                    else if(azimut >=  225 && azimut < 315){
-                        direction = "W";
-                    }
-                    else if(azimut >= 135 && azimut < 225){
-                        direction = "S";
-                    }
-                    else{
-                        direction = "E";
-                    }
-                    textDirection.setText(direction);
-                }
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +70,7 @@ public class ContactMapActivity extends AppCompatActivity {
         getMapData();
         initCompass();
 
+        //Ask permission for location, If user declines Snackbar will say you must have location enabled to use some features.
         try {
             if (Build.VERSION.SDK_INT >= 23) {
                 if (ContextCompat.checkSelfPermission(ContactMapActivity.this,
@@ -135,7 +84,7 @@ public class ContactMapActivity extends AppCompatActivity {
                                         ActivityCompat.requestPermissions(
                                                 ContactMapActivity.this,
                                                 new String[]{
-                                                        Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_LOCATION);
+                                                        Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
                                     }
                                 })
                                 .show();
@@ -143,7 +92,7 @@ public class ContactMapActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(ContactMapActivity.this,
                                 new String[]{
                                         Manifest.permission.ACCESS_FINE_LOCATION},
-                                PERMISSION_REQUEST_LOCATION);
+                                REQUEST_LOCATION_PERMISSION);
                     }
                 } else {
                     startMap();
@@ -155,50 +104,49 @@ public class ContactMapActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         createLocationRequest();
-        createLocationCallback();
+        createLocationCallBack();
 
-        initListButton();
-        initMapButton();
-        initSettingsButton();
+
+        //Navigate Buttons
+        settingsButton = findViewById(R.id.imageButtonSettings);
+        mapButton = findViewById(R.id.imageButtonMap);
+        listButton = findViewById(R.id.imageButtonList);
+
+        //Settings button
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                launchSettings(view);
+            }
+        });
+        //Map Button
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchMap(view);
+            }
+        });
+        //Contact List button;
+        listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchList(view);
+            }
+
+        });
+
+
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission( getBaseContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return  ;
-        }
-        try {
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void startLocationUpdates() {
-        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getBaseContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
-        gMap.setMyLocationEnabled(true);
-    }
-
+    //Method that starts the map
     private void startMap() {
+        //Creates empty array list to gather contacts
         contacts = new ArrayList<>();
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         Bundle extras = getIntent().getExtras();
-
         try {
             ContactDataSource ds = new ContactDataSource(ContactMapActivity.this);
             ds.open();
@@ -209,7 +157,7 @@ public class ContactMapActivity extends AppCompatActivity {
             }
             ds.close();
         } catch (Exception e) {
-            Toast.makeText(this,"Contact(s) cou;d not be retrieved.",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Contact(s) cound not be retrived.",Toast.LENGTH_LONG).show();
         }
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -224,16 +172,15 @@ public class ContactMapActivity extends AppCompatActivity {
                     w.getDefaultDisplay().getSize(size);
                     int measureWidth = size.x;
                     int measureHeight = size.y;
-                    if(contacts.size() > 0){
+                    if(contacts.size()>0){
                         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        for(int i = 0; i < contacts.size(); i++){
+                        for(int i=0; i<contacts.size(); i++){
                             currentContact = contacts.get(i);
 
                             Geocoder geo = new Geocoder(ContactMapActivity.this);
                             List<Address> addresses = null;
-
                             String address = currentContact.getStreetAddress() +
-                                    ", " + currentContact.getCity() +
+                                    ", "+currentContact.getCity() +
                                     ", " + currentContact.getState() + " " +
                                     currentContact.getZipCode();
                             try{
@@ -253,7 +200,7 @@ public class ContactMapActivity extends AppCompatActivity {
                             Geocoder geo = new Geocoder(ContactMapActivity.this);
                             List<Address> addresses = null;
                             String address = currentContact.getStreetAddress() +
-                                    ", " + currentContact.getCity() +
+                                    ", "+currentContact.getCity() +
                                     ", " + currentContact.getState() + " " +
                                     currentContact.getZipCode();
                             try{
@@ -283,45 +230,6 @@ public class ContactMapActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void getMapData() {
-        Bundle extras = getIntent().getExtras();
-        try {
-            ContactDataSource ds = new ContactDataSource(ContactMapActivity.this);
-            ds.open();
-            if (extras != null) {
-                currentContact = ds.getSpecificContact(extras.getInt("contactid"));
-            } else {
-                contacts = ds.getContacts(ContactDBHelper.NAME, "ASC");
-            }
-            ds.close();
-        } catch (Exception e) {
-            Toast.makeText(this,"Contact(s) could not be retrieved.",Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void createLocationRequest() {
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    private void createLocationCallback() {
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    Toast.makeText(getBaseContext(), "Lat: " + location.getLatitude() + " Long: " + location.getLongitude() + " Accuracy: " + location.getAccuracy(), Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-    }
-
     private void initMapTypeButtons() {
         RadioGroup mapTypeGroup = findViewById(R.id.map_type);
         mapTypeGroup.check(R.id.mapTypenormal);
@@ -338,6 +246,94 @@ public class ContactMapActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        try {
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Navigate Buttons
+    //Method that Launches Settings Activity
+    private void launchSettings(View v) {
+        Intent i = new Intent(ContactMapActivity.this, ContactSettingsActivity.class);
+        i.setFlags(i.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+
+    }
+
+    //Method that launches Contact List
+    private void launchList(View v) {
+        Intent i = new Intent(ContactMapActivity.this, ContactListActivity.class);
+        i.setFlags(i.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+    }
+
+    //Method that launches MapContact List
+    private void launchMap(View v) {
+        Intent i = new Intent(ContactMapActivity.this, MainActivity.class);
+        i.setFlags(i.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+    }
+
+    private void createLocationRequest() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void createLocationCallBack() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+
+                }
+            }
+        };
+    }
+
+    private void startLocationUpdates() {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getBaseContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getBaseContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        gMap.setMyLocationEnabled(true);
+    }
+
+    private void getMapData() {
+        Bundle extras = getIntent().getExtras();
+        try {
+            ContactDataSource ds = new ContactDataSource(ContactMapActivity.this);
+            ds.open();
+            if (extras != null) {
+                currentContact = ds.getSpecificContact(extras.getInt("contactid"));
+            } else {
+                contacts = ds.getContacts(ContactDBHelper.NAME, "ASC");
+            }
+            ds.close();
+        } catch (Exception e) {
+            Toast.makeText(this,"Contact(s) cound not be retrived.",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void initCompass(){
@@ -356,34 +352,52 @@ public class ContactMapActivity extends AppCompatActivity {
         textDirection = (TextView) findViewById(R.id.gpsText);
 
     }
-
-    private void initListButton () {
-        ibList = findViewById(R.id.imageButtonList);
-        ibList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ContactMapActivity.this, ContactListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+    private SensorEventListener mySensorEventListener = new SensorEventListener() {
+        float[] accelerometerValues;
+        float[] magneticValues;
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+                accelerometerValues = event.values;
             }
-        });
-
-    }
-
-    private void initMapButton () {
-        ibMap = findViewById(R.id.imageButtonMap);
-        ibMap.setEnabled(false);
-    }
-
-    private void initSettingsButton () {
-        ibSettings = findViewById(R.id.imageButtonSettings);
-        ibSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ContactMapActivity.this, ContactSettingsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+            if(event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD){
+                magneticValues = event.values;
             }
-        });
-    }
+            //If sensors are found
+            if(accelerometerValues!=null && magneticValues!=null){
+                float R[] = new float[9];
+                float I[] = new float[9];
+                boolean success = SensorManager.getRotationMatrix(R,I,accelerometerValues,magneticValues);
+                if(success){
+                    float orientation[] = new float[3];
+                    SensorManager.getOrientation(R,orientation);
+
+                    float azimut = (float) Math.toDegrees(orientation[0]);
+                    if (azimut < 0.0f){
+                        azimut+=360.0f;
+                    }
+                    String direction;
+                    if(azimut>=315 || azimut < 45 ){
+                        direction = "N";
+
+                    }
+                    else if(azimut>= 225 && azimut < 315){
+                        direction = "W";
+                    }
+                    else if(azimut>= 135 && azimut < 225){
+                        direction = "S";
+                    }
+                    else{
+                        direction = "E";
+                    }
+                    textDirection.setText(direction);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 }
